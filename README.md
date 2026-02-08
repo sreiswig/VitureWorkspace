@@ -1,2 +1,2 @@
 # VitureWorkspace
-Workspace to control my homelab, monitored by Viture glasses
+Workspace to control my homelab, via Viture glasses
