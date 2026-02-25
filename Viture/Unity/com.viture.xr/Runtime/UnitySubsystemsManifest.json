@@ -1,0 +1,13 @@
+{
+    "name": "VITURE XR Plugin",
+    "version": "0.5.0",
+    "libraryName": "VitureUnityXR",
+    "displays": [
+    {
+        "id": "Viture-Display"
+    }],
+    "inputs": [
+    {
+        "id": "Viture-Input"
+    }]
+}

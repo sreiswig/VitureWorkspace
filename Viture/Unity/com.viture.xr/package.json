@@ -1,0 +1,29 @@
+{
+  "name": "com.viture.xr",
+  "displayName": "VITURE XR Plugin",
+  "version": "0.5.0",
+  "unity": "6000.0",
+  "description": "Unity XR plugin for VITURE devices.",
+  "keywords": [
+    "viture",
+    "xr",
+    "ar",
+    "xreditorsubsystem"
+  ],
+  "dependencies": {
+    "com.unity.xr.management": "4.5.1"
+  },
+  "documentationUrl": "https://www.viture.com/developer/unity-sdk/unity#overview",  
+  "samples": [
+    {
+      "displayName": "Starter Assets",
+      "description": "Pre-configured XR Origin prefab and input actions for VITURE hand tracking. Sets up basic hand interaction with XR Interaction Toolkit.\n<i>Dependencies:</i>\n \u2022 <a href=\"com.unity3d.kharma:upmpackage/com.unity.shadergraph\">Shader Graph</a>\n \u2022 <a href=\"com.unity3d.kharma:upmpackage/com.unity.xr.interaction.toolkit\">XR Interaction Toolkit</a>\n \u2022 <a href=\"com.unity3d.kharma:upmpackage/com.unity.xr.hands\">XR Hands</a>",
+      "path": "Samples~/Starter Assets"
+    },
+    {
+      "displayName": "Marker Tracking Demo",
+      "description": "Demonstrates how to track multiple markers and visualize them with 3D objects.\n<i>Dependencies:</i>\n \u2022 <a href=\"com.unity3d.kharma:upmpackage/com.unity.xr.interaction.toolkit\">XR Interaction Toolkit</a>\n \u2022 <a href=\"com.unity3d.kharma:upmpackage/com.unity.xr.hands\">XR Hands</a>\n \u2022 Starter Assets sample",
+      "path": "Samples~/Marker Tracking Demo"
+    }
+  ]
+}

@@ -1,0 +1,590 @@
+{
+    "name": "Viture Input Actions",
+    "maps": [
+        {
+            "name": "Viture Head",
+            "id": "5dd3ba82-1c9d-4253-a83a-947ee831f4b1",
+            "actions": [
+                {
+                    "name": "Is Tracked",
+                    "type": "Button",
+                    "id": "a3ab5602-0e37-4bdb-bba6-f2c6f4ab92a9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Tracking State",
+                    "type": "Value",
+                    "id": "7c52fbcc-2e24-4bd7-bde3-769d40d489a5",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Position",
+                    "type": "Value",
+                    "id": "31f77188-30e0-4f43-b40e-ae41a3f795e2",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Rotation",
+                    "type": "Value",
+                    "id": "27d0ade0-484f-46e6-8a58-28f54f17b590",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3961978c-4e32-46f6-acbd-0c80c6429b71",
+                    "path": "<XRHMD>/isTracked",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Is Tracked",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c42cc274-e71c-4267-be09-ef0750b7706f",
+                    "path": "<XRHMD>/trackingState",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tracking State",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a84e0b99-6602-4a31-aa55-cd84e0895871",
+                    "path": "<XRHMD>/centerEyePosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9d18f841-0432-46ac-b1a9-95c55d259287",
+                    "path": "<XRHMD>/centerEyeRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Viture Hand Left",
+            "id": "039dc2fc-ba1e-48e7-a80a-2283e88ccf0c",
+            "actions": [
+                {
+                    "name": "Is Tracked",
+                    "type": "Button",
+                    "id": "5af750d7-4ccb-4985-967b-ebb288832a53",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Tracking State",
+                    "type": "Value",
+                    "id": "86483d9c-4854-4f1c-9607-884b693e05cc",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Position",
+                    "type": "Value",
+                    "id": "4f7b8b91-90f1-4030-bab1-28a24d5a41d1",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Rotation",
+                    "type": "Value",
+                    "id": "ab28bbea-01a4-4ba2-8b43-5d76f3bdc279",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Pinch Position",
+                    "type": "Value",
+                    "id": "7fd5572c-de62-4d38-9da8-b894d8d41c8c",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Aim Position",
+                    "type": "Value",
+                    "id": "de66cda9-6590-4e85-9ee4-8b40d1ffba2c",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Aim Rotation",
+                    "type": "Value",
+                    "id": "3149579a-baa7-43c8-b94c-868acc1773f7",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Poke Position",
+                    "type": "Value",
+                    "id": "cf1da0c3-b15b-4ea0-9eeb-b1d53da28f5c",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Poke Rotation",
+                    "type": "Value",
+                    "id": "d42538bd-b64c-4e07-96f6-dd054f5cda17",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "6f385955-d76d-4080-b177-9cde6d9fbacb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Gesture",
+                    "type": "Value",
+                    "id": "495142f5-3db6-41c7-8e48-a3576b59fccc",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Palm Facing",
+                    "type": "Value",
+                    "id": "99b548b2-7bbd-44d1-9aed-3e23157e268d",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "fccf7382-e65a-4f4d-b5bd-3774bd67686c",
+                    "path": "<VitureHandDevice>{LeftHand}/isTracked",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Is Tracked",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f107f6f9-31ec-47d0-a624-31a0c7aa5489",
+                    "path": "<VitureHandDevice>{LeftHand}/trackingState",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tracking State",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8cc64abe-d1b9-4706-b195-1391491e680a",
+                    "path": "<VitureHandDevice>{LeftHand}/devicePosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "714148ce-36e2-490c-a640-1c235b950b43",
+                    "path": "<VitureHandDevice>{LeftHand}/deviceRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "75369f89-5d05-480b-9dd4-66a712cf2ca8",
+                    "path": "<VitureHandDevice>{LeftHand}/pinchPosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pinch Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5b64cc30-1d3f-4cfd-8a0f-bbdf0bb29ef4",
+                    "path": "<VitureHandDevice>{LeftHand}/aimPosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0e4c79de-a8bc-44c5-95f4-b81270b4bb83",
+                    "path": "<VitureHandDevice>{LeftHand}/aimRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6eb50260-867c-4311-b415-a6909467715b",
+                    "path": "<VitureHandDevice>{LeftHand}/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1492ce7d-b9b2-4f78-8c51-4fab12322cf6",
+                    "path": "<VitureHandDevice>{LeftHand}/gesture",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Gesture",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "98592ef8-2bc4-41b9-a26b-58ba9b1d0a21",
+                    "path": "<VitureHandDevice>{LeftHand}/palmFacing",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Palm Facing",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b486f9d3-d522-4674-bf05-1cca53f8adf3",
+                    "path": "<VitureHandDevice>{LeftHand}/pokePosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Poke Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fe5b56b1-7663-4b2e-ac8a-9d4ecbc2222d",
+                    "path": "<VitureHandDevice>{LeftHand}/pokeRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Poke Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Viture Hand Right",
+            "id": "f928afb9-288f-4f80-bea2-5196f6c3469f",
+            "actions": [
+                {
+                    "name": "Is Tracked",
+                    "type": "Button",
+                    "id": "8a658c87-1f88-4cfa-9775-ddea9629171f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Tracking State",
+                    "type": "Value",
+                    "id": "5963505d-c065-41b0-9f4c-63ab682bf30c",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Position",
+                    "type": "Value",
+                    "id": "8f5430a2-8bb7-4db6-be51-fab8403401c9",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Rotation",
+                    "type": "Value",
+                    "id": "b0cbc0fb-2649-4f81-9142-f67cf08e2a7c",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Pinch Position",
+                    "type": "Value",
+                    "id": "31bfbc1c-05c3-4562-b01c-4a78f0d20ebe",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Aim Position",
+                    "type": "Value",
+                    "id": "2efdec53-861e-47b3-9e47-fd1c1e2024e3",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Aim Rotation",
+                    "type": "Value",
+                    "id": "a1b004b6-6fbb-4f11-9714-48831b1da292",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Poke Position",
+                    "type": "Value",
+                    "id": "648242f3-0b99-4af9-bf60-6b271e00d1d9",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Poke Rotation",
+                    "type": "Value",
+                    "id": "6c35d41c-f861-44bd-b274-06c3e51521ad",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "3221e61f-3c1f-427a-9cab-d21df355ba9a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Gesture",
+                    "type": "Value",
+                    "id": "932bf5d5-874a-43f8-8466-69cdc85cd63c",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Palm Facing",
+                    "type": "Value",
+                    "id": "8e5fd7f6-5808-4413-8ec7-2bcd863508c1",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "139ff9e9-b9bf-4fc9-a630-1572925d01ef",
+                    "path": "<VitureHandDevice>{RightHand}/isTracked",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Is Tracked",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "67a02aad-ac35-4fd8-be9d-200d97e8c1c9",
+                    "path": "<VitureHandDevice>{RightHand}/trackingState",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tracking State",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "26043059-076a-481d-a09c-36c123a68188",
+                    "path": "<VitureHandDevice>{RightHand}/devicePosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "62f03088-36d3-4fe2-b8b0-dd9186300fde",
+                    "path": "<VitureHandDevice>{RightHand}/deviceRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b243634e-e3ab-43b4-88e6-cf6ea039145d",
+                    "path": "<VitureHandDevice>{RightHand}/pinchPosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pinch Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fd96f87c-d77c-4c86-859c-4edf67d16772",
+                    "path": "<VitureHandDevice>{RightHand}/aimPosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "258bba7f-6f78-4487-b8b4-b784ce5007cf",
+                    "path": "<VitureHandDevice>{RightHand}/aimRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4573ae38-e0bd-4497-b7f9-e0d95ee3ef3a",
+                    "path": "<VitureHandDevice>{RightHand}/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a2a32af6-8f4f-4420-a81f-500b5b44f54b",
+                    "path": "<VitureHandDevice>{RightHand}/gesture",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Gesture",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9b67144c-b14a-441e-a3b8-6455d103da68",
+                    "path": "<VitureHandDevice>{RightHand}/palmFacing",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Palm Facing",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "962063dd-ac69-4085-a1f5-6870d0a5d99c",
+                    "path": "<VitureHandDevice>{RightHand}/pokePosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Poke Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "97b1434c-72db-409b-879c-5742f3378f51",
+                    "path": "<VitureHandDevice>{RightHand}/pokeRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Poke Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
