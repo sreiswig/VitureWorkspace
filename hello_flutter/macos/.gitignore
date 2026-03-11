@@ -1,0 +1,10 @@
+# Flutter-related
+**/Flutter/ephemeral/
+**/Pods/
+**/GeneratedPluginRegistrant.swift
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+
+# Xcode-related
+**/dgph
+**/xcuserdata/

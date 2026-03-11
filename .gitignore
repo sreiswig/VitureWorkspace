@@ -6,5 +6,39 @@ devenv.local.yaml
 # direnv
 .direnv
 
+# Android tools
+.android/
+local.properties
+
+# Common OS & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+*.iml
+*.ipr
+*.iws
+.idea/
+*.class
+*.log
+*.pyc
+*.swp
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+
+# Common Flutter/Dart (global patterns)
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+**/doc/api/
+app.*.symbols
+app.*.map.json
+
 # pre-commit
 .pre-commit-config.yaml
