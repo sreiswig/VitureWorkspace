@@ -42,3 +42,9 @@ app.*.map.json
 
 # pre-commit
 .pre-commit-config.yaml
+
+# Viture SDK — download locally; do not commit new SDK drops
+# (existing tracked Viture/ remains until a Sam-approved purge)
+/Viture/
+sdk-manifest.toml
+.sdk-cache/
