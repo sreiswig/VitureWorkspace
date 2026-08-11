@@ -1,0 +1,22 @@
+# Copy to sdk-manifest.toml and fill real values from viture.com/developer.
+# DO NOT commit real proprietary URLs if the portal terms disallow redistribution.
+# Checksums must be real SHA-256 hex digests of the exact files you download.
+
+[sdk]
+# Human label for logs
+name = "Viture SDK"
+# TODO: paste the official download URL from the developer portal
+url = "https://TODO.example.invalid/viture-sdk-REPLACE_VERSION.zip"
+# TODO: sha256sum of that exact zip
+sha256 = "REPLACE_WITH_64_HEX_SHA256_DIGEST_OF_THE_ZIP"
+# Where to place the extracted tree (relative to repo root); must stay gitignored
+extract_to = "Viture"
+
+[unity]
+# Optional second artifact — Unity package com.viture.xr 0.5.0 (confirm current)
+name = "com.viture.xr"
+version = "0.5.0"
+url = "https://TODO.example.invalid/com.viture.xr-0.5.0.tgz"
+sha256 = "REPLACE_WITH_64_HEX_SHA256_DIGEST_OF_THE_TGZ"
+# Optional extract/copy target; leave empty to only verify+store under .sdk-cache/
+extract_to = ""
