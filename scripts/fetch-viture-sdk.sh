@@ -20,6 +20,41 @@ is_placeholder() {
   return 1
 }
 
+# extract_to must be empty (cache only) or a path under Viture/ with no traversal.
+is_jailed_extract() {
+  local p="$1"
+  [[ -z "$p" ]] && return 0
+  [[ "$p" == *..* ]] && return 1
+  [[ "$p" == /* ]] && return 1
+  [[ "$p" == \\* ]] && return 1
+  case "$p" in
+    Viture|Viture/*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+# Archive member paths must not escape the extract root.
+archive_paths_safe() {
+  local dest="$1"
+  local listing
+  case "$dest" in
+    *.zip)
+      listing="$(unzip -Z -1 "$dest" 2>/dev/null || unzip -l "$dest" | awk 'NR>3 {print $4}')"
+      ;;
+    *.tgz|*.tar.gz|*.tar)
+      listing="$(tar -tf "$dest")"
+      ;;
+    *)
+      die "unknown archive type for $dest"
+      ;;
+  esac
+  while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    [[ "$line" == *..* ]] && die "archive member escapes extract root: $line"
+    [[ "$line" == /* ]] && die "archive member is absolute: $line"
+  done <<< "$listing"
+}
+
 # Minimal TOML getter for flat keys under [section]: key = "value"
 toml_get() {
   local section="$1" key="$2" file="$3"
@@ -54,6 +89,12 @@ fetch_one() {
   is_placeholder "$url" && die "$label: url is a placeholder/TODO — edit sdk-manifest.toml with the official portal URL"
   is_placeholder "$expect_sha" && die "$label: sha256 is a placeholder/TODO — refuse to download without a real digest"
   [[ "$expect_sha" =~ ^[0-9a-fA-F]{64}$ ]] || die "$label: sha256 must be 64 hex chars"
+  is_jailed_extract "$extract_to" || die "$label: extract_to='$extract_to' must be empty or under Viture/ (no .., no absolute paths)"
+
+  # CI / explicit guard: never pull the proprietary SDK on GitHub Actions.
+  if [[ -n "${GITHUB_ACTIONS:-}" || "${CI_NO_FETCH:-}" == "1" ]]; then
+    die "$label: refusing to download SDK in CI (fail-closed; no network fetch)"
+  fi
 
   mkdir -p "$CACHE"
   local base dest
@@ -75,12 +116,8 @@ fetch_one() {
 
   if [[ -n "$extract_to" ]]; then
     local target="$ROOT/$extract_to"
-    # Only allow extract under repo, and prefer the conventional Viture/ path
-    case "$extract_to" in
-      Viture|Viture/*|.sdk-cache/*) ;;
-      *) die "$label: extract_to='$extract_to' not in allowed set (Viture[/...] or .sdk-cache/...)" ;;
-    esac
     mkdir -p "$target"
+    archive_paths_safe "$dest"
     echo "    extracting → $target"
     case "$dest" in
       *.zip)  need_cmd unzip; unzip -q -o "$dest" -d "$target" ;;
