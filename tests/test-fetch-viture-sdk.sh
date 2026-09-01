@@ -142,7 +142,14 @@ else
   PASS=$((PASS + 1))
 fi
 
-# 9) workflows never invoke a live SDK download
+# 9) workflows never invoke a live SDK download.
+#
+# Weak (170445e): grep for 'fetch-viture-sdk\\.sh' (literal backslash-dot)
+# never matches, so `run: bash scripts/fetch-viture-sdk.sh` would stay green.
+# Weak (943b317): any `scripts/fetch-viture-sdk.sh` mention is a "download",
+# so the `bash -n` syntax-check false-reds this job.
+# Secure: allow parse-only `bash -n`. Fail if a workflow RUNS the fetch
+# script, or curls/wgets a Viture host.
 if [[ -d "$ROOT/.github/workflows" ]]; then
   if grep -RniE 'curl[[:space:]].*viture|wget[[:space:]].*viture|shop\.viture\.com' "$ROOT/.github/workflows"; then
     echo "FAIL: workflow fetches from Viture"
@@ -151,14 +158,16 @@ if [[ -d "$ROOT/.github/workflows" ]]; then
     echo "PASS: workflows do not fetch from Viture hosts"
     PASS=$((PASS + 1))
   fi
-  if grep -R 'fetch-viture-sdk\.sh' "$ROOT/.github/workflows" | grep -v test-fetch; then
-    if grep -R 'scripts/fetch-viture-sdk.sh' "$ROOT/.github/workflows" | grep -v test-fetch-viture; then
-      echo "FAIL: workflow calls fetch script outside tests"
-      FAIL=$((FAIL + 1))
-    else
-      echo "PASS: fetch script not invoked live in CI"
-      PASS=$((PASS + 1))
-    fi
+  live_fetch="$(
+    grep -R 'scripts/fetch-viture-sdk\.sh' "$ROOT/.github/workflows" \
+      | grep -v test-fetch-viture \
+      | grep -v 'bash -n' \
+      || true
+  )"
+  if [[ -n "$live_fetch" ]]; then
+    echo "FAIL: workflow calls fetch script outside tests"
+    echo "$live_fetch"
+    FAIL=$((FAIL + 1))
   else
     echo "PASS: fetch script not invoked live in CI"
     PASS=$((PASS + 1))
