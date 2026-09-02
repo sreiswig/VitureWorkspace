@@ -148,8 +148,9 @@ fi
 # never matches, so `run: bash scripts/fetch-viture-sdk.sh` would stay green.
 # Weak (943b317): any `scripts/fetch-viture-sdk.sh` mention is a "download",
 # so the `bash -n` syntax-check false-reds this job.
-# Secure: allow parse-only `bash -n`. Fail if a workflow RUNS the fetch
-# script, or curls/wgets a Viture host.
+# Weak (substring `grep -v 'bash -n'`): `run: bash -n scripts/fetch-viture-sdk.sh && bash scripts/fetch-viture-sdk.sh` false-greens.
+# Secure: drop only an end-anchored parse-only `bash -n` of the fetch script.
+# Fail if a workflow RUNS it, or curls/wgets a Viture host.
 if [[ -d "$ROOT/.github/workflows" ]]; then
   if grep -RniE 'curl[[:space:]].*viture|wget[[:space:]].*viture|shop\.viture\.com' "$ROOT/.github/workflows"; then
     echo "FAIL: workflow fetches from Viture"
@@ -161,7 +162,7 @@ if [[ -d "$ROOT/.github/workflows" ]]; then
   live_fetch="$(
     grep -R 'scripts/fetch-viture-sdk\.sh' "$ROOT/.github/workflows" \
       | grep -v test-fetch-viture \
-      | grep -v 'bash -n' \
+      | grep -vE '[[:space:]]bash[[:space:]]+-n[[:space:]]+scripts/fetch-viture-sdk\.sh[[:space:]]*$' \
       || true
   )"
   if [[ -n "$live_fetch" ]]; then
