@@ -22,9 +22,6 @@ permissions:
 jobs:
   sbom:
     runs-on: ubuntu-latest
-    # contents: write only so release runs can attach the SBOM asset.
-    # PRs/pushes still upload a workflow artifact with the default token.
-    # No security-events: that would be GitHub code scanning (GHAS on private).
     permissions:
       contents: write
     steps:
