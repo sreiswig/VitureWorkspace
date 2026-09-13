@@ -1,6 +1,8 @@
-# Free-tier CycloneDX SBOM via Syft (anchore/sbom-action).
-# Artifact only — do not commit generated SBOM blobs.
-# No paid GHAS / Dependency Review required. dependency-snapshot left false.
+# Free-tier CycloneDX SBOM via Syft (anchore/sbom-action)
+# plus Grype vuln scan of that SBOM.
+# Artifact only — do not commit generated SBOM / Grype blobs.
+# No paid GHAS / Dependency Review / code-scanning SARIF upload.
+# dependency-snapshot left false.
 name: SBOM
 
 on:
@@ -10,6 +12,9 @@ on:
   workflow_dispatch:
   release:
     types: [published]
+  schedule:
+    # Weekly: Monday 09:00 America/Chicago (14:00 UTC while CDT)
+    - cron: "0 14 * * 1"
 
 permissions:
   contents: read
@@ -19,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     # contents: write only so release runs can attach the SBOM asset.
     # PRs/pushes still upload a workflow artifact with the default token.
+    # No security-events: that would be GitHub code scanning (GHAS on private).
     permissions:
       contents: write
     steps:
@@ -35,3 +41,22 @@ jobs:
           upload-artifact-retention: "30"
           upload-release-assets: true
           dependency-snapshot: false
+
+      - name: Scan CycloneDX SBOM (Grype)
+        id: grype
+        uses: anchore/scan-action@27805bf3b4e84b4a5c980df22ed233c00390a439 # v7.4.2
+        with:
+          sbom: sbom.cyclonedx.json
+          fail-build: false
+          severity-cutoff: high
+          output-format: json
+          output-file: grype.json
+          cache-db: true
+
+      - name: Upload Grype report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: grype-report
+          path: grype.json
+          retention-days: 30
