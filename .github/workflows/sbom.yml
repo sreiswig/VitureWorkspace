@@ -1,0 +1,37 @@
+# Free-tier CycloneDX SBOM via Syft (anchore/sbom-action).
+# Artifact only — do not commit generated SBOM blobs.
+# No paid GHAS / Dependency Review required. dependency-snapshot left false.
+name: SBOM
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    # contents: write only so release runs can attach the SBOM asset.
+    # PRs/pushes still upload a workflow artifact with the default token.
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Generate CycloneDX SBOM (Syft)
+        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: sbom.cyclonedx.json
+          upload-artifact: true
+          upload-artifact-retention: "30"
+          upload-release-assets: true
+          dependency-snapshot: false
