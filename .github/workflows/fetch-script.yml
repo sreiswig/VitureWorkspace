@@ -7,6 +7,9 @@ on:
     branches: [main]
 
 # Public-repo free tier only. Never download the proprietary Viture SDK.
+permissions:
+  contents: read
+
 jobs:
   fail-closed:
     runs-on: ubuntu-latest
