@@ -1,0 +1,8 @@
+# Dependabot: keep GitHub Actions up to date (weekly).
+# Free-tier only — no paid GHAS / Dependency Review / larger runners.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
