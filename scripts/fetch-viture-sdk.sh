@@ -1,42 +1,26 @@
 #!/usr/bin/env bash
 # fetch-viture-sdk.sh — download Viture SDK from an official URL in sdk-manifest.toml,
 # verify SHA-256, extract into gitignored Viture/. Fail closed on any doubt.
+# Policy decisions live in lib/sdk-fetch-policy.sh (pure). This file is the edge:
+# files, curl, checksum process, archive listing, env, and process exit.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MANIFEST="${SDK_MANIFEST:-$ROOT/sdk-manifest.toml}"
 CACHE="${SDK_CACHE:-$ROOT/.sdk-cache}"
 
+# shellcheck source=lib/sdk-fetch-policy.sh
+source "$ROOT/scripts/lib/sdk-fetch-policy.sh"
+
 die() { echo "ERROR: $*" >&2; exit 1; }
 
 need_cmd() { command -v "$1" >/dev/null 2>&1 || die "missing required command: $1"; }
 
-is_placeholder() {
-  local v="$1"
-  [[ -z "$v" ]] && return 0
-  [[ "$v" == *TODO* ]] && return 0
-  [[ "$v" == *REPLACE* ]] && return 0
-  [[ "$v" == *example.invalid* ]] && return 0
-  return 1
-}
-
-# extract_to must be empty (cache only) or a path under Viture/ with no traversal.
-is_jailed_extract() {
-  local p="$1"
-  [[ -z "$p" ]] && return 0
-  [[ "$p" == *..* ]] && return 1
-  [[ "$p" == /* ]] && return 1
-  [[ "$p" == \\* ]] && return 1
-  case "$p" in
-    Viture|Viture/*) return 0 ;;
-    *) return 1 ;;
-  esac
-}
-
 # Archive member paths must not escape the extract root.
+# Listing the archive is an effect; the allow/deny decision is pure.
 archive_paths_safe() {
   local dest="$1"
-  local listing
+  local listing result member
   case "$dest" in
     *.zip)
       listing="$(unzip -Z -1 "$dest" 2>/dev/null || unzip -l "$dest" | awk 'NR>3 {print $4}')"
@@ -48,30 +32,45 @@ archive_paths_safe() {
       die "unknown archive type for $dest"
       ;;
   esac
-  while IFS= read -r line; do
-    [[ -z "$line" ]] && continue
-    [[ "$line" == *..* ]] && die "archive member escapes extract root: $line"
-    [[ "$line" == /* ]] && die "archive member is absolute: $line"
-  done <<< "$listing"
+  result="$(decide_archive_members "$listing")"
+  case "$result" in
+    ok) ;;
+    deny\ escape\ *)
+      member="${result#deny escape }"
+      die "archive member escapes extract root: $member"
+      ;;
+    deny\ absolute\ *)
+      member="${result#deny absolute }"
+      die "archive member is absolute: $member"
+      ;;
+    *)
+      die "malformed archive member result: $result"
+      ;;
+  esac
 }
 
 # Minimal TOML getter for flat keys under [section]: key = "value"
+# File read stays here; matching is toml_lookup.
 toml_get() {
   local section="$1" key="$2" file="$3"
-  awk -v sec="$section" -v key="$key" '
-    BEGIN { insec=0 }
-    /^[[:space:]]*\[/ {
-      insec = ($0 ~ "^[[:space:]]*\\[" sec "\\][[:space:]]*$")
-      next
-    }
-    insec && $0 ~ "^[[:space:]]*" key "[[:space:]]*=" {
-      sub(/^[^=]*=[[:space:]]*/, "")
-      gsub(/^[[:space:]]+|[[:space:]]+$/, "")
-      gsub(/^"|"$/, "")
-      print
-      exit
-    }
-  ' "$file"
+  local text result
+  text="$(<"$file")"
+  result="$(toml_lookup "$section" "$key" "$text")"
+  case "$result" in
+    ok)
+      printf '\n'
+      ;;
+    ok\ *)
+      printf '%s\n' "${result#ok }"
+      ;;
+    deny\ missing)
+      return 0
+      ;;
+    *)
+      echo "ERROR: malformed toml lookup result: $result" >&2
+      return 1
+      ;;
+  esac
 }
 
 sha256_file() {
@@ -84,17 +83,57 @@ sha256_file() {
 
 fetch_one() {
   local label="$1" url="$2" expect_sha="$3" extract_to="$4"
+  local url_result digest_result path_result ci_result got checksum_result
   echo "==> $label"
 
-  is_placeholder "$url" && die "$label: url is a placeholder/TODO — edit sdk-manifest.toml with the official portal URL"
-  is_placeholder "$expect_sha" && die "$label: sha256 is a placeholder/TODO — refuse to download without a real digest"
-  [[ "$expect_sha" =~ ^[0-9a-fA-F]{64}$ ]] || die "$label: sha256 must be 64 hex chars"
-  is_jailed_extract "$extract_to" || die "$label: extract_to='$extract_to' must be empty or under Viture/ (no .., no absolute paths)"
+  url_result="$(decide_placeholder "$url")"
+  case "$url_result" in
+    ok) ;;
+    deny\ *)
+      die "$label: url is a placeholder/TODO — edit sdk-manifest.toml with the official portal URL"
+      ;;
+    *)
+      die "$label: malformed placeholder result: $url_result"
+      ;;
+  esac
+
+  digest_result="$(decide_digest "$expect_sha")"
+  case "$digest_result" in
+    ok) ;;
+    deny\ bad_hex)
+      die "$label: sha256 must be 64 hex chars"
+      ;;
+    deny\ empty|deny\ todo|deny\ replace|deny\ example_invalid)
+      die "$label: sha256 is a placeholder/TODO — refuse to download without a real digest"
+      ;;
+    *)
+      die "$label: malformed digest result: $digest_result"
+      ;;
+  esac
+
+  path_result="$(decide_extract_path "$extract_to")"
+  case "$path_result" in
+    ok) ;;
+    deny\ *)
+      die "$label: extract_to='$extract_to' must be empty or under Viture/ (no .., no absolute paths)"
+      ;;
+    *)
+      die "$label: malformed extract path result: $path_result"
+      ;;
+  esac
 
   # CI / explicit guard: never pull the proprietary SDK on GitHub Actions.
-  if [[ -n "${GITHUB_ACTIONS:-}" || "${CI_NO_FETCH:-}" == "1" ]]; then
-    die "$label: refusing to download SDK in CI (fail-closed; no network fetch)"
-  fi
+  # Env is read here and passed in; decide_ci_fetch does not see the environment.
+  ci_result="$(decide_ci_fetch "${GITHUB_ACTIONS:-}" "${CI_NO_FETCH:-}")"
+  case "$ci_result" in
+    ok) ;;
+    deny\ ci_blocked)
+      die "$label: refusing to download SDK in CI (fail-closed; no network fetch)"
+      ;;
+    *)
+      die "$label: malformed CI fetch result: $ci_result"
+      ;;
+  esac
 
   mkdir -p "$CACHE"
   local base dest
@@ -106,12 +145,19 @@ fetch_one() {
     || die "$label: download failed (fail closed)"
   mv "$dest.partial" "$dest"
 
-  local got
   got="$(sha256_file "$dest")"
-  if [[ "${got,,}" != "${expect_sha,,}" ]]; then
-    rm -f "$dest"
-    die "$label: checksum mismatch (got $got, expected $expect_sha) — deleted download"
-  fi
+  checksum_result="$(decide_checksum_match "$got" "$expect_sha")"
+  case "$checksum_result" in
+    ok) ;;
+    deny\ mismatch)
+      rm -f "$dest"
+      die "$label: checksum mismatch (got $got, expected $expect_sha) — deleted download"
+      ;;
+    *)
+      rm -f "$dest"
+      die "$label: malformed checksum result: $checksum_result"
+      ;;
+  esac
   echo "    checksum OK ($got)"
 
   if [[ -n "$extract_to" ]]; then

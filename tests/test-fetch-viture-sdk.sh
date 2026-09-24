@@ -5,6 +5,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCRIPT="$ROOT/scripts/fetch-viture-sdk.sh"
+# shellcheck source=../scripts/lib/sdk-fetch-policy.sh
+source "$ROOT/scripts/lib/sdk-fetch-policy.sh"
 PASS=0
 FAIL=0
 
@@ -143,31 +145,49 @@ else
 fi
 
 # 9) workflows never invoke a live SDK download.
-#
-# Weak (170445e): grep for 'fetch-viture-sdk\\.sh' (literal backslash-dot)
-# never matches, so `run: bash scripts/fetch-viture-sdk.sh` would stay green.
-# Weak (943b317): any `scripts/fetch-viture-sdk.sh` mention is a "download",
-# so the `bash -n` syntax-check false-reds this job.
-# Weak (substring `grep -v 'bash -n'`): `run: bash -n scripts/fetch-viture-sdk.sh && bash scripts/fetch-viture-sdk.sh` false-greens.
-# Secure: drop only an end-anchored parse-only `bash -n` of the fetch script.
-# Fail if a workflow RUNS it, or curls/wgets a Viture host.
+# Line classification is decide_workflow_* in the pure policy core
+# (syntax-only `bash -n` is allowed; a chained live run is not).
 if [[ -d "$ROOT/.github/workflows" ]]; then
-  if grep -RniE 'curl[[:space:]].*viture|wget[[:space:]].*viture|shop\.viture\.com' "$ROOT/.github/workflows"; then
+  host_hits=""
+  live_hits=""
+  shopt -s nullglob
+  for wf in "$ROOT"/.github/workflows/*; do
+    [[ -f "$wf" ]] || continue
+    while IFS= read -r line || [[ -n "$line" ]]; do
+      host_result="$(decide_workflow_host_line "$line")"
+      case "$host_result" in
+        ok) ;;
+        deny\ *)
+          host_hits+="$wf: $line"$'\n'
+          ;;
+        *)
+          host_hits+="$wf: malformed host result: $host_result"$'\n'
+          ;;
+      esac
+      script_result="$(decide_workflow_script_line "$line")"
+      case "$script_result" in
+        ok\ absent|ok\ syntax_only|ok\ test_reference) ;;
+        deny\ *)
+          live_hits+="$wf: $line"$'\n'
+          ;;
+        *)
+          live_hits+="$wf: malformed script result: $script_result"$'\n'
+          ;;
+      esac
+    done < "$wf"
+  done
+  shopt -u nullglob
+  if [[ -n "$host_hits" ]]; then
     echo "FAIL: workflow fetches from Viture"
+    printf '%s' "$host_hits"
     FAIL=$((FAIL + 1))
   else
     echo "PASS: workflows do not fetch from Viture hosts"
     PASS=$((PASS + 1))
   fi
-  live_fetch="$(
-    grep -R 'scripts/fetch-viture-sdk\.sh' "$ROOT/.github/workflows" \
-      | grep -v test-fetch-viture \
-      | grep -vE '[[:space:]]bash[[:space:]]+-n[[:space:]]+scripts/fetch-viture-sdk\.sh[[:space:]]*$' \
-      || true
-  )"
-  if [[ -n "$live_fetch" ]]; then
+  if [[ -n "$live_hits" ]]; then
     echo "FAIL: workflow calls fetch script outside tests"
-    echo "$live_fetch"
+    printf '%s' "$live_hits"
     FAIL=$((FAIL + 1))
   else
     echo "PASS: fetch script not invoked live in CI"

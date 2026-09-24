@@ -29,5 +29,7 @@ Do not commit portal URLs, tokens, or real SHA-256 checksums of SDK zips. `sdk-m
 
 ```bash
 bash -n scripts/fetch-viture-sdk.sh
+bash -n scripts/lib/sdk-fetch-policy.sh
+tests/test-sdk-fetch-policy.sh
 tests/test-fetch-viture-sdk.sh
 ```
