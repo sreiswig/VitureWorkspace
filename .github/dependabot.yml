@@ -1,4 +1,8 @@
-# Dependabot: keep GitHub Actions up to date (weekly).
+# Dependabot: Flutter (pub) sample + GitHub Actions (weekly).
+#
+# hello_flutter/pubspec.lock is committed, so pub updates apply to the lockfile.
+# Semver-major pub version updates are ignored; a human decides breaking bumps.
+# Minor and patch pub updates are grouped.
 # Free-tier only — no paid GHAS / Dependency Review / larger runners.
 version: 2
 updates:
@@ -6,3 +10,19 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+
+  - package-ecosystem: "pub"
+    directory: "/hello_flutter"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      pub-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
