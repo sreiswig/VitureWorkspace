@@ -3,6 +3,11 @@
 # hello_flutter/pubspec.lock is committed, so pub updates apply to the lockfile.
 # Semver-major pub version updates are ignored; a human decides breaking bumps.
 # Minor and patch pub updates are grouped.
+# GitHub Actions: minor/patch bumps are grouped into one PR, and majors are
+# grouped (not ignored) into a separate PR for manual review. Actions are
+# SHA-pinned, and GitHub sends no Dependabot alerts for SHA-pinned actions, so
+# version updates are the only signal they are falling behind; an ignore rule
+# would also suppress security updates and let majors go stale.
 # Free-tier only — no paid GHAS / Dependency Review / larger runners.
 version: 2
 updates:
@@ -10,6 +15,18 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      github-actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      github-actions-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
 
   - package-ecosystem: "pub"
     directory: "/hello_flutter"
