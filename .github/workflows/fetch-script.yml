@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   fail-closed:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       CI_NO_FETCH: "1"
     steps:
