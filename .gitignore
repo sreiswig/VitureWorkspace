@@ -48,3 +48,6 @@ app.*.map.json
 /Viture/
 sdk-manifest.toml
 .sdk-cache/
+
+# Compiled hello_viture binary — build locally, do not commit
+hello_viture/hello_viture

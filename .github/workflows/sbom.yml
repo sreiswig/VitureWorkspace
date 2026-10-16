@@ -19,9 +19,19 @@ on:
 permissions:
   contents: read
 
+# Cancel superseded pull_request runs only. Every other event (push, release,
+# schedule, workflow_dispatch) gets a unique group via run_id, so it is never
+# cancelled nor replaced while pending by a newer run in the same group.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   sbom:
     runs-on: ubuntu-24.04
+    # Caps hung steps once a runner picks the job up (~1.5-2.2 min observed incl. Grype DB; 20 min headroom).
+    # Does NOT bound time spent queued waiting for a runner.
+    timeout-minutes: 20
     permissions:
       contents: write
     steps:
