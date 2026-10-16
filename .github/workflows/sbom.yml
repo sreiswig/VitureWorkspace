@@ -29,7 +29,7 @@ permissions:
 jobs:
   sbom:
     runs-on: ubuntu-24.04
-    # Caps hung steps once a runner picks the job up (observed ~2 min).
+    # Caps hung steps once a runner picks the job up (~1.4-2.6 min observed incl. Grype DB; 20 min headroom).
     # Does NOT bound time spent queued waiting for a runner.
     timeout-minutes: 20
     # Least privilege: generate, scan, and upload artifacts only.

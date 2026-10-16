@@ -6,13 +6,21 @@ on:
   pull_request:
     branches: [main]
 
-# Public-repo free tier only (ubuntu-latest). No paid GHAS / larger runners.
+# Public-repo free tier only (GitHub-hosted ubuntu-24.04, pinned). No paid GHAS / larger runners.
 permissions:
   contents: read
+
+# Cancel superseded pull_request runs; push runs on main are never cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   flutter:
     runs-on: ubuntu-24.04
+    # Caps hung steps once a runner picks the job up (~45s-1.8 min observed incl. Flutter SDK setup; 20 min headroom).
+    # Does NOT bound time spent queued waiting for a runner.
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: hello_flutter
