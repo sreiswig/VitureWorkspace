@@ -1,0 +1,54 @@
+name: hello_viture
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "hello_viture/**"
+      - "Viture/Linux_x86_64/**"
+      - ".github/workflows/hello-viture.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "hello_viture/**"
+      - "Viture/Linux_x86_64/**"
+      - ".github/workflows/hello-viture.yml"
+
+# Public-repo free tier only (GitHub-hosted ubuntu-24.04, pinned). No paid GHAS / larger runners.
+# Compile and link the tracked SDK tree. Do not download the proprietary SDK, and do not run the binary (no glasses in CI).
+permissions:
+  contents: read
+
+# Cancel superseded pull_request runs; push runs on main are never cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  compile:
+    runs-on: ubuntu-24.04
+    # Caps hung steps once a runner picks the job up (local cmake build ~1s; 10 min headroom).
+    # Does NOT bound time spent queued waiting for a runner.
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Configure and build
+        run: |
+          cmake -S hello_viture -B build
+          cmake --build build
+
+      - name: Sanity-check the linked binary
+        run: |
+          set -euo pipefail
+          file build/hello_viture
+          # libglasses.so has DT_RUNPATH=$ORIGIN, so libcarina_vio.so resolves.
+          # libcarina_vio.so has no RUNPATH, and the executable's DT_RUNPATH is
+          # not searched for that dependency's NEEDED entries, so plain ldd
+          # reports the vendored OpenCV 4.2 sonames as "not found". They live
+          # in the SDK lib dir. Link does not need them on the command line.
+          ldd build/hello_viture || true
+          sdk="Viture/Linux_x86_64/release/x86_64"
+          echo "--- ldd with SDK dir on LD_LIBRARY_PATH ---"
+          LD_LIBRARY_PATH="$sdk" ldd build/hello_viture
+          readelf -d build/hello_viture | grep -q 'libglasses\.so'

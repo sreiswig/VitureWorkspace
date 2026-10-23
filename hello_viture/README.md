@@ -15,6 +15,10 @@ This is a minimal "Hello World" example for the Viture XR Glasses SDK on Linux.
 -   `main.cpp`: The source code.
 -   `CMakeLists.txt`: CMake configuration (optional, if you have cmake).
 
+## CI
+
+GitHub Actions configures and builds this sample on Ubuntu 24.04 (`.github/workflows/hello-viture.yml`). The job links only; it does not run the binary.
+
 ## Building manually with g++
 
 The SDK libraries have dependencies on OpenCV and other libs provided in the SDK folder. You need to link them all.

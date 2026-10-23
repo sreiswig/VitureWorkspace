@@ -26,6 +26,7 @@ Do not commit portal URLs, tokens, or real SHA-256 checksums of SDK zips. `sdk-m
 - **Do not download the proprietary Viture SDK in CI.** Tests are fail-closed (placeholder URLs, extract_to jail). Set `CI_NO_FETCH=1` in GitHub Actions.
 - `extract_to` is jailed under `Viture/` (no `..`, no absolute paths).
 - Free-tier GitHub Actions only (`ubuntu-latest`, SHA-pinned actions). No paid GHAS, billed runners, or Copilot-for-PRs.
+- `hello_viture` compile check (`.github/workflows/hello-viture.yml`, `ubuntu-24.04`): `cmake -S hello_viture -B build` and `cmake --build build`. Link only; the binary is left unexecuted because CI has no glasses.
 
 ```bash
 bash -n scripts/fetch-viture-sdk.sh
