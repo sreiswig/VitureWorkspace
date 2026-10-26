@@ -42,13 +42,36 @@ jobs:
         run: |
           set -euo pipefail
           file build/hello_viture
-          # libglasses.so has DT_RUNPATH=$ORIGIN, so libcarina_vio.so resolves.
-          # libcarina_vio.so has no RUNPATH, and the executable's DT_RUNPATH is
-          # not searched for that dependency's NEEDED entries, so plain ldd
-          # reports the vendored OpenCV 4.2 sonames as "not found". They live
-          # in the SDK lib dir. Link does not need them on the command line.
-          ldd build/hello_viture || true
+          # Static DT_NEEDED read only. Do not run ldd: a crafted ELF can
+          # execute loader code. Do not execute build/hello_viture or any SDK
+          # binary, and do not set LD_LIBRARY_PATH.
+          # libglasses.so has DT_RUNPATH=$ORIGIN, so libcarina_vio.so sits beside
+          # it. libcarina_vio.so has no RUNPATH; its OpenCV 4.2 NEEDED sonames
+          # still have to be present in the SDK lib dir. Link does not need
+          # them on the command line.
+          echo "--- NEEDED (readelf -d) ---"
+          readelf -d build/hello_viture | grep NEEDED
           sdk="Viture/Linux_x86_64/release/x86_64"
-          echo "--- ldd with SDK dir on LD_LIBRARY_PATH ---"
-          LD_LIBRARY_PATH="$sdk" ldd build/hello_viture
-          readelf -d build/hello_viture | grep -q 'libglasses\.so'
+          # Fail closed. Each soname must exist under $sdk (test -f) and be
+          # listed as DT_NEEDED on the executable or the SDK object that
+          # requests it (readelf -d only).
+          require_sdk_lib() {
+            local name="$1"
+            local provider="$2"
+            if ! test -f "${sdk}/${name}"; then
+              echo "::error::SDK library missing from ${sdk}: ${name}"
+              exit 1
+            fi
+            local dynamic
+            if ! dynamic="$(readelf -d "${provider}")"; then
+              echo "::error::readelf -d failed for ${provider} while checking ${name}"
+              exit 1
+            fi
+            if ! grep NEEDED <<<"${dynamic}" | grep -F -q "[${name}]"; then
+              echo "::error::SDK library not listed as DT_NEEDED or not resolvable via readelf: ${name} (provider ${provider})"
+              exit 1
+            fi
+          }
+          require_sdk_lib libglasses.so build/hello_viture
+          require_sdk_lib libcarina_vio.so "${sdk}/libglasses.so"
+          require_sdk_lib libopencv_core.so.4.2 "${sdk}/libcarina_vio.so"
