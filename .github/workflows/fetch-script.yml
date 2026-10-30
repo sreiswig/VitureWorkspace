@@ -10,9 +10,17 @@ on:
 permissions:
   contents: read
 
+# Cancel superseded pull_request runs; push runs on main are never cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   fail-closed:
     runs-on: ubuntu-24.04
+    # Caps hung steps once a runner picks the job up (~10-16s observed; 10 min headroom).
+    # Does NOT bound time spent queued waiting for a runner.
+    timeout-minutes: 10
     env:
       CI_NO_FETCH: "1"
     steps:
